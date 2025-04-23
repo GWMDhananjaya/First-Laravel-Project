@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Models\Employee;
+use App\Models\Student;
 
 class StudentController extends Controller
 {
-    protected $employee;
+    protected $student;
     public function __construct(){
-        $this->employee = new Employee();
+        $this->student = new Student();
         
     }
     public function index()
     {
         try {
-            return response()->json($this->employee->all(), 200);
+            return response()->json($this->student->all(), 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
@@ -24,8 +24,8 @@ class StudentController extends Controller
     public function store(Request $request)
     {  
         try {
-            $employee = $this->employee->create($request->all());
-            return response()->json($employee, 201);
+            $student = $this->student->create($request->all());
+            return response()->json($student, 201);
         } catch (\Exception $e) {
             return response()->json(['error' => $e], 500);
         }
@@ -34,11 +34,11 @@ class StudentController extends Controller
     public function show(string $id)
     {
         try {
-            $employee = $this->employee->find($id);
-            if (!$employee) {
-                return response()->json(['error' => 'Employee not found'], 404);
+            $student = $this->student->find($id);
+            if (!$student) {
+                return response()->json(['error' => 'student not found'], 404);
             }
-            return response()->json($employee, 200);
+            return response()->json($student, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
@@ -46,12 +46,12 @@ class StudentController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $employee = $this->employee->find($id);
-            if (!$employee) {
-                return response()->json(['error' => 'Employee not found'], 404);
+            $student = $this->student->find($id);
+            if (!$student) {
+                return response()->json(['error' => 'student not found'], 404);
             }
-            $employee->update($request->all());
-            return response()->json($employee, 200);
+            $student->update($request->all());
+            return response()->json($student, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
@@ -59,12 +59,12 @@ class StudentController extends Controller
     public function destroy(string $id)
     {
         try {
-            $employee = $this->employee->find($id);
-            if (!$employee) {
-                return response()->json(['error' => 'Employee not found'], 404);
+            $student = $this->student->find($id);
+            if (!$student) {
+                return response()->json(['error' => 'student not found'], 404);
             }
-            $employee->delete();
-            return response()->json(['message' => 'Employee deleted successfully'], 200);
+            $student->delete();
+            return response()->json(['message' => 'student deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Internal Server Error'], 500);
         }

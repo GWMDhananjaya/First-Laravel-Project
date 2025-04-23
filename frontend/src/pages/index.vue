@@ -1,7 +1,7 @@
-<template>
-  <HelloWorld />
-</template>
-
 <script setup>
-  //
+import Student from "../components/Student.vue";
 </script>
+
+<template>
+  <Student />
+</template>
