@@ -1,84 +1,74 @@
 <template>
-  <div class="container">
-    <h3 align="center" class="mt-5">Student Management</h3>
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <div class="form-area">
-          <form id="check-register-form" @submit.prevent="save">
-            <div class="row">
-              <div class="col-md-6">
-                <label>Student Name</label>
-                <v-text-field
-                  v-model="student.name"
-                  label="Student Name"
-                  required
-                ></v-text-field>
-              </div>
+  <div class="container py-6">
+    <v-card class="mx-auto max-w-4xl pa-6 elevation-3">
+      <h2 class="text-center mb-6">Add Student</h2>
 
-              <div class="col-md-6">
-                <label>Student Address</label>
-                <v-text-field
-                  v-model="student.address"
-                  label="Student Address"
-                  required
-                >
-                </v-text-field>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <label>Phone</label>
-                <v-text-field
-                  v-model="student.phone"
-                  label="Student Address"
-                  required
-                >
-                </v-text-field>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12 mt-3">
-                <v-btn type="submit" color="success" form="check-register-form"
-                  >Save</v-btn
-                >
-              </div>
-            </div>
-          </form>
-        </div>
+      <!-- Form Section -->
+      <v-form @submit.prevent="save" id="student-form">
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="student.name"
+              label="Student Name"
+              outlined
+              dense
+              required
+            />
+          </v-col>
 
-        <v-table theme="dark">
-          <thead>
-            <tr>
-              <th class="text-left">Student ID</th>
-              <th class="text-left">Student Name</th>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="student.address"
+              label="Student Address"
+              outlined
+              dense
+              required
+            />
+          </v-col>
 
-              <th class="text-left">Address</th>
+          <v-col cols="12">
+            <v-text-field
+              v-model="student.phone"
+              label="Phone Number"
+              outlined
+              dense
+              required
+            />
+          </v-col>
 
-              <th class="text-left">Phone</th>
-              <th class="text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="student in result" :key="student.id">
-              <td>{{ student.id }}</td>
-              <td>{{ student.name }}</td>
-              <td>{{ student.address }}</td>
-              <td>{{ student.phone }}</td>
-              <td>
-                <v-btn type="button" color="info" @click="edit(student)"
-                  >Edit</v-btn
-                >
+          <v-col cols="12" class="text-center">
+            <v-btn
+              type="submit"
+              color="success"
+              class="mt-3"
+              prepend-icon="mdi-content-save"
+            >
+              {{ student.id ? "Update" : "Save" }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card>
 
-                <v-btn type="button" color="danger" @click="remove(student)"
-                  >Delete</v-btn
-                >
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
-      </div>
-    </div>
+    <!-- Student List Table -->
+    <v-card class="mx-auto max-w-6xl mt-8 elevation-3">
+      <v-card-title class="text-h6 text-center">📋 Student List</v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="result"
+        class="elevation-1"
+        dense
+      >
+        <template v-slot:item.action="{ item }">
+          <v-btn icon color="info" @click="edit(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn icon color="error" @click="remove(item)">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-card>
   </div>
 </template>
 
@@ -89,87 +79,72 @@ export default {
   name: "Student",
   data() {
     return {
-      result: {},
+      result: [],
       student: {
         id: "",
         name: "",
         address: "",
         phone: "",
       },
+      headers: [
+        { text: "ID", value: "id" },
+        { text: "Name", value: "name" },
+        { text: "Address", value: "address" },
+        { text: "Phone", value: "phone" },
+        { text: "Actions", value: "action", sortable: false },
+      ],
     };
   },
   created() {
     this.StudentLoad();
   },
-  mounted() {
-    console.log("mounted() called.......");
-  },
-
   methods: {
     StudentLoad() {
-      var page = "http://127.0.0.1:8000/api/student";
-      axios.get(page).then(({ data }) => {
-        console.log(data);
+      axios.get("http://127.0.0.1:8000/api/student").then(({ data }) => {
         this.result = data;
       });
     },
-
     save() {
-      if (this.student.id == "") {
-        this.saveData();
-      } else {
-        this.updateData();
-      }
+      this.student.id ? this.updateData() : this.saveData();
     },
     saveData() {
-      axios
-        .post("http://127.0.0.1:8000/api/student", this.student)
-        .then(({ data }) => {
-          this.StudentLoad();
-          this.student.name = "";
-          (this.student.address = ""), (this.student.phone = "");
-          this.id = "";
-        });
-    },
-    edit(student) {
-      this.student = student;
-    },
-    updateData() {
-      var editrecords = "http://127.0.0.1:8000/api/student/" + this.student.id;
-      axios.put(editrecords, this.student).then(({ data }) => {
-        this.student.name = "";
-        (this.student.address = ""), (this.student.phone = "");
-        this.id = "";
-        alert("Updated!!!");
+      axios.post("http://127.0.0.1:8000/api/student", this.student).then(() => {
+        this.resetForm();
         this.StudentLoad();
       });
     },
-
+    edit(student) {
+      this.student = { ...student };
+    },
+    updateData() {
+      axios
+        .put(
+          `http://127.0.0.1:8000/api/student/${this.student.id}`,
+          this.student
+        )
+        .then(() => {
+          this.resetForm();
+          alert("Student Updated!");
+          this.StudentLoad();
+        });
+    },
     remove(student) {
-      var url = `http://127.0.0.1:8000/api/student/${student.id}`;
-
-      axios.delete(url);
-      alert("Deleteddd");
-      this.StudentLoad();
+      axios
+        .delete(`http://127.0.0.1:8000/api/student/${student.id}`)
+        .then(() => {
+          alert("Student Deleted!");
+          this.StudentLoad();
+        });
+    },
+    resetForm() {
+      this.student = { id: "", name: "", address: "", phone: "" };
     },
   },
 };
 </script>
 
 <style scoped>
-.form-area {
-  padding: 20px;
-  margin-top: 20px;
-  background-color: #0b0b0b;
-  color: #fffcfc;
-}
-.bi-trash-fill {
-  color: red;
-  font-size: 18px;
-}
-.bi-pencil {
-  color: green;
-  font-size: 18px;
-  margin-left: 20px;
+.container {
+  background-color: #f9f9f9;
 }
 </style>
