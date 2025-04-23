@@ -6,7 +6,9 @@
 </p>
 
 <p align="center">
-![Image](https://github.com/user-attachments/assets/bf0afcdb-4bfd-4076-bd2e-2add236a1f3a)
+
+  <img src="https://github.com/user-attachments/assets/bf0afcdb-4bfd-4076-bd2e-2add236a1f3a" />
+
 </p>
 ---
 
